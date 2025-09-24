@@ -5,6 +5,38 @@ import bodyParser from 'body-parser'
 import express from 'express'
 
 const app = express()
+
+/**
+ *  Middleware
+ * Authentication
+ * Authorization
+ * Logging
+ * Error Handling
+ 
+ */
+
+function logger(req,res,next){
+    console.log(req.rawHeaders[1])
+    console.log(req.rawHeaders[3])
+
+    console.log("Incoming request")
+    // example request unauthorized user
+
+    // return res.status(401).send("Unauthorized")
+    // if(req.query.user === "borey"){
+    //     next()
+    // }else{
+    //     res.status(401).send("Unauthorized")
+    // }
+    next()
+}
+function autherize(req,res,next){
+    return res.status(404).json({
+        message: "Unauthorized"
+    })
+}
+    
+
 // create application/json parser
 const jsonParser = bodyParser.json()
 
@@ -18,13 +50,21 @@ const database = {
 }
 app.use(express.json())
 app.use(bodyParser.json())
+app.use(logger)
+
+
+
+// app.get('/courses',logger, (req,res)=>{ 
+    app.get('/courses', (req,res)=>{ // without middleware
+   return res.status(202) .send("Hello World")
+})
 
 // parse application/x-www-form-urlencoded
 // app.use(express.urlencoded({ extended: true }))
 
-app.post('/courses',jsonParser,(req,res)=>{
+app.post('/courses',autherize,(req,res)=>{
     console.log(req.body)
-    res.json(req.body)
+   return res.json(req.body)
 })
 // Call back function
 
@@ -41,7 +81,7 @@ app.post('/courses',jsonParser,(req,res)=>{
 app.get('/', (req, res)=>{
     console.log('Requset From:',req.ip)
     console.log('Requset Hostname:',req.hostname)
-    res.send("Hello World 2")
+    return res.send("Hello World 2")
     
 })
 
@@ -62,7 +102,7 @@ app.get('/test', (req,res)=>{
 app.post('/test', (req,res)=>{
     console.log(req.body)
     // res.status(201).send("Post URL")
-    res.status(201).send(req.body)
+    return res.status(201).send(req.body)
 
 })
 // request with parameters
@@ -71,15 +111,15 @@ app.get('/users/:id', (req,res)=>{
     // res.send("User ID: " + req.params.id)
     const user = database.users.find(user => user.id === req.params.id)
     if(user){
-        res.json(user)
+        return res.json(user)
     }else{
-        res.status(404).send("User not found")
+        return res.status(404).send("User not found")
     }
 
 })
 // return all users
 app.get('/users', (req,res)=>{
-    res.json(database.users)
+    return res.json(database.users)
 })
 
 // Server
