@@ -6,6 +6,12 @@ import express from 'express'
 
 const app = express()
 
+const courses = [
+    {id: '1', title: "Javascript"},
+    {id: '2', title: "React"},
+    {id: '3', title: "Node"},
+]
+
 /**
  *  Middleware
  * Authentication
@@ -53,12 +59,27 @@ app.use(bodyParser.json())
 app.use(logger)
 
 
-
+/**
+ * GET all courses
+ 
+ */
 // app.get('/courses',logger, (req,res)=>{ 
     app.get('/courses', (req,res)=>{ // without middleware
-   return res.status(202) .send("Hello World")
+        console.log(req.query)
+        // connect to database and past query to database
+        return res.status(202) .send("Hello World")
 })
+/**
+ * GET course by id
+ */
+app.get('/courses/:id', (req,res)=>{
+    // console.log(req.params.id)
 
+    const  id = req.params.id
+    const course = courses.find((item)=>
+        {return item.id === id })
+    return res.json(course)
+})
 // parse application/x-www-form-urlencoded
 // app.use(express.urlencoded({ extended: true }))
 
@@ -78,7 +99,7 @@ app.post('/courses',autherize,(req,res)=>{
 
 // Route
 // app.get('/', rootResponse)
-app.get('/', (req, res)=>{
+app.get('/',(req, res)=>{
     console.log('Requset From:',req.ip)
     console.log('Requset Hostname:',req.hostname)
     return res.send("Hello World 2")
