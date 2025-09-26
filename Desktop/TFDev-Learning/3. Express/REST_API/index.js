@@ -1,3 +1,6 @@
+
+// require('dotenv').config()
+import 'dotenv/config'
 import express from "express"
 import bodyParser from "body-parser"
 import courseRouter from "./src/routes/course.js"
@@ -198,6 +201,9 @@ app.use(errorHandler)
 //     return res.json(database.users)
 // })
 // Server
-app.listen(4000, ()=>{
-    console.log("Server running on port 4000")
+// app.listen(4000, ()=>{
+//     console.log("Server running on port 4000")
+// })
+app.listen(process.env.PORT, ()=>{
+    console.log(`Server running on port ${process.env.PORT}`)
 })
