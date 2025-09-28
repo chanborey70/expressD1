@@ -1,29 +1,36 @@
-import courses from '../models/courses.js'
+// import courses from '../models/courses.js'
+import CourseModel from '../models/courses.js'
 
 /**
  * Controller for create course is a specific function that handles a specific request
  */
 
 // create course
-function createCourse(req,res){
+async function createCourse(req,res){
     const newCourse = {
         id: req.body.id,
         title: req.body.title,
+        category: req.body.category,
+        author: req.body.author,
+        price: req.body.price,
     }
-    const exist = courses.some((item)=>{
-        return item.id === newCourse.id
-    })
-    if(exist){
-        return res.status(400).json({
-            message: "Course already exists"
-        })
-    }
-    courses.push(newCourse)
-    return res.json(
-        {
-            message: "Course created successfully",
-            item:newCourse
-        })
+    const course = new CourseModel(newCourse)
+    const result = await course.save()
+    return res.json(result)
+    // const exist = courses.some((item)=>{
+    //     return item.id === newCourse.id
+    // })
+    // if(exist){
+    //     return res.status(400).json({
+    //         message: "Course already exists"
+    //     })
+    // }
+    // courses.push(newCourse)
+    // return res.json(
+    //     {
+    //         message: "Course created successfully",
+    //         item:newCourse
+    //     })
 }
 
 // get course by id
@@ -41,7 +48,10 @@ function getCourseById(req,res){
 }  
 
 // get all courses
-function getAllCourses(req,res){
+async function getAllCourses(req,res){
+    // return res.json(courses)
+    // get all course from MOnogoDB Model
+    const courses = await CourseModel.find()
     return res.json(courses)
 }
 // delete course
